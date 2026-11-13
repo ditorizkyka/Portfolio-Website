@@ -85,6 +85,9 @@ export interface ProjectData {
   duration: string;
   short_description: string;
   long_description: string;
+  background?: string;
+  implementation?: string;
+  struggle?: string;
   images: string[];
   tech_stack: string[];
   repo_link: string;

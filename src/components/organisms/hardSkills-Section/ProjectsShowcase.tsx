@@ -1,24 +1,45 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { X, Calendar, Code, Link as LinkIcon, Shapes, Radio, ChevronDown } from 'lucide-react';
-import { ProjectCard, ProjectBadge } from '../../molecules/ProjectCard';
+import React, { useEffect, useState, useRef } from 'react';
+import { Link as LinkIcon, Shapes, ChevronDown, Filter, Check } from 'lucide-react';
+import { ProjectCard } from '../../molecules/ProjectCard';
 import ScrambleText from "../../atoms/buttonAnimation";
 import { Project } from '@/src/types/project';
-import Image from 'next/image';
-import { ProjectText, ProjectTitle } from '../../atoms/ProjectText';
 import { getProjectCategory, PROJECT_CATEGORIES } from '@/src/lib/projectCategories';
-import { plainProjectTitle } from '@/src/lib/projectText';
 
 const PROJECTS_PER_LOAD = 9;
 const PROJECT_FILTERS = ['All Projects', ...PROJECT_CATEGORIES] as const;
 type ProjectFilter = typeof PROJECT_FILTERS[number];
 
 const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [filter, setFilter] = useState<ProjectFilter>('All Projects');
   const [visibleCount, setVisibleCount] = useState(PROJECTS_PER_LOAD);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDropdownOpen]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -27,30 +48,21 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Prevent body scroll when dialog is open
-  useEffect(() => {
-    if (selectedProject) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [selectedProject]);
-
   const truncateText = (text: string, maxLines = 2): string => {
     const words = text.split(' ');
     const maxWords = maxLines * 15;
     return words.length > maxWords ? words.slice(0, maxWords).join(' ') + '...' : text;
   };
 
-  const closeDialog = () => setSelectedProject(null);
-
   const selectFilter = (nextFilter: ProjectFilter) => {
     if (nextFilter === filter) return;
     setFilter(nextFilter);
     setVisibleCount(PROJECTS_PER_LOAD);
+  };
+
+  const getFilterCount = (option: ProjectFilter) => {
+    if (option === 'All Projects') return projects.length;
+    return projects.filter((project) => getProjectCategory(project.category) === option).length;
   };
 
   const filteredProjects = filter === 'All Projects'
@@ -74,18 +86,96 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
             </p>
           </div>
 
-          <div role="group" aria-label="Filter projects by category" className="mb-6 flex flex-wrap gap-2 md:mb-8">
-            {PROJECT_FILTERS.map((option) => (
+          {/* Filter Dropdown */}
+          <div className="relative mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div ref={dropdownRef} className="relative inline-block w-full sm:w-auto text-left">
               <button
-                key={option}
                 type="button"
-                aria-pressed={filter === option}
-                onClick={() => selectFilter(option)}
-                className="rounded-lg border border-[#333] bg-[#141415] px-3 py-2 text-xs font-semibold text-[#ccc] transition-colors hover:bg-[#222] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6DD33D] aria-pressed:border-[#6DD33D] aria-pressed:bg-[#6DD33D] aria-pressed:text-black md:px-4 md:text-sm"
+                onClick={() => setIsDropdownOpen((prev) => !prev)}
+                className={`flex w-full sm:w-auto items-center justify-between sm:justify-start gap-2.5 rounded-xl border px-4 py-2.5 text-xs md:text-sm font-medium transition-colors ${
+                  isDropdownOpen
+                    ? 'border-[#555] bg-[#1a1a1c] text-white'
+                    : filter !== 'All Projects'
+                    ? 'border-[#444] bg-[#141415] text-white'
+                    : 'border-[#333] bg-[#141415] text-[#ccc] hover:border-[#444] hover:text-white'
+                }`}
+                aria-haspopup="listbox"
+                aria-expanded={isDropdownOpen}
               >
-                {option}
+                <div className="flex items-center gap-2.5">
+                  <Filter className="w-4 h-4 text-[#888]" />
+                  <span className="text-[#888]">Filter:</span>
+                  <span className="font-semibold text-white">{filter}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full px-2 py-0.5 text-[11px] font-mono border border-[#333] bg-[#222] text-[#aaa]">
+                    {filteredProjects.length}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-[#888] transition-transform duration-200 ${
+                      isDropdownOpen ? 'rotate-180 text-white' : ''
+                    }`}
+                  />
+                </div>
               </button>
-            ))}
+
+              {/* Dropdown Menu */}
+              {isDropdownOpen && (
+                <div
+                  role="listbox"
+                  className="absolute left-0 mt-2 w-full sm:w-64 origin-top-left rounded-xl border border-[#333] bg-[#141415] p-1.5 shadow-2xl z-30 animate-dropdown"
+                >
+                  <div className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-[#777] border-b border-[#262628] mb-1">
+                    Select Category
+                  </div>
+                  {PROJECT_FILTERS.map((option) => {
+                    const isSelected = filter === option;
+                    const count = getFilterCount(option);
+
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        role="option"
+                        aria-selected={isSelected}
+                        onClick={() => {
+                          selectFilter(option);
+                          setIsDropdownOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-xs md:text-sm transition-colors text-left ${
+                          isSelected
+                            ? 'bg-white/10 text-white font-medium'
+                            : 'text-[#ccc] hover:bg-[#222] hover:text-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          {isSelected ? (
+                            <Check className="w-4 h-4 text-white shrink-0" />
+                          ) : (
+                            <span className="w-4 h-4 shrink-0" />
+                          )}
+                          <span>{option}</span>
+                        </div>
+                        <span className="rounded-full px-2 py-0.5 text-[11px] font-mono border border-[#333] bg-[#1c1c1e] text-[#888]">
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Reset button if filter active */}
+            {filter !== 'All Projects' && (
+              <button
+                type="button"
+                onClick={() => selectFilter('All Projects')}
+                className="self-start sm:self-auto text-xs text-[#888] hover:text-white transition-colors underline underline-offset-4 decoration-[#444] hover:decoration-white"
+              >
+                Reset to All Projects
+              </button>
+            )}
           </div>
 
           <p role="status" className={filteredProjects.length ? 'sr-only' : 'mb-10 rounded-xl border border-[#333] p-6 text-sm text-[#ccc]'}>
@@ -102,7 +192,6 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
                 project={project}
                 isMobile={isMobile}
                 truncateText={truncateText}
-                onClick={(p) => setSelectedProject(p)}
               />
             ))}
           </div>
@@ -143,137 +232,6 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
         </div>
       </section>
 
-      {/* Modal Dialog dengan Portal - SAMA SEPERTI SOCIAL PROJECTS */}
-      {typeof window !== 'undefined' && selectedProject && createPortal(
-        <div 
-          className="fixed inset-0 z-9999 flex items-center justify-center py-3 px-6 md:p-6 "
-          onClick={closeDialog}
-        >
-          {/* Background Overlay */}
-          <div className="absolute inset-0 bg-black/85 backdrop-blur-md transition-opacity" />
-
-          {/* Dialog Content */}
-          <div 
-            className="relative z-10000 bg-[#0A0A0B] border border-[#333] rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={closeDialog}
-              className="absolute top-4 right-4 z-50 bg-black/70 hover:bg-black/90 text-white p-2 rounded-full backdrop-blur-md transition-all hover:scale-110 border border-white/10"
-            >
-              <X className="w-5 h-5 md:w-6 md:h-6" />
-            </button>
-
-            {/* Header Image */}
-            <div className="relative w-full h-56 md:h-72 overflow-hidden rounded-t-2xl">
-              <Image
-                src={selectedProject.images[0]}
-                alt={plainProjectTitle(selectedProject.title)}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 1200px"
-                priority
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0B] via-transparent to-transparent" />
-              
-              {/* Label Badge */}
-              <div className="absolute top-4 left-4">
-                <ProjectBadge label={selectedProject.category} />
-              </div>
-
-              {/* Title Overlay */}
-              <div className="absolute bottom-4 left-6 right-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
-                  <ProjectTitle value={selectedProject.title} />
-                </h2>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-6 md:p-8 space-y-6">
-              {/* Meta Information */}
-              <div className="flex flex-wrap gap-4 md:gap-8 pb-6 border-b border-[#1f1f1f]">
-                <div className="flex items-center gap-2 text-gray-400">
-                  <Calendar className="w-4 h-4 text-[#6DD33D]" />
-                  <span className="text-sm font-medium">{selectedProject.duration}</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-400">
-                  <Code className="w-4 h-4 text-[#6DD33D]" />
-                  <span className="text-sm font-medium">Tech Stack</span>
-                </div>
-              </div>
-
-              {/* Tech Stack Tags */}
-              <div>
-                <h4 className="text-sm font-semibold text-gray-500 mb-3 uppercase tracking-wider">Technologies</h4>
-                <div className="flex flex-wrap gap-2">
-                  {selectedProject.tech_stack.map((tech, i) => (
-                    <span 
-                      key={i} 
-                      className="px-3 py-1 bg-[#1A1A1A] text-gray-300 text-sm rounded-md border border-[#333] hover:border-[#555] transition-colors"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Description */}
-              <div>
-                <h4 className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wider">Deskripsi</h4>
-                <ProjectText value={selectedProject.short_description} className="text-gray-300 text-sm md:text-base leading-7" />
-              </div>
-
-              {/* Implementation */}
-              <div>
-                <h4 className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wider">Implementasi</h4>
-                <ProjectText
-                  value={selectedProject.long_description}
-                  className="text-gray-300 text-sm md:text-base leading-7"
-                  allowLegacyHtml
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col md:flex-row gap-3 pt-4">
-                <a 
-                  href={selectedProject.repo_link} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl text-center font-medium transition-colors text-white flex items-center justify-center gap-2"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                  </svg>
-                  View on GitHub
-                </a>
-                
-                {selectedProject.demo_link && (
-                  <a 
-                    href={selectedProject.demo_link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex-1 bg-green-600 hover:bg-green-700 py-3 rounded-xl text-center font-medium transition-colors text-white flex items-center justify-center gap-2"
-                  >
-                    <Radio className="w-5 h-5" />
-                    Live Demo
-                  </a>
-                )}
-                
-                <button 
-                  onClick={closeDialog}
-                  className="flex-1 bg-[#1f1f1f] hover:bg-[#2a2a2a] text-white font-medium py-3 rounded-xl transition-colors border border-white/5"
-                >
-                  Close Details
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
-
       {/* Animations */}
       <style jsx>{`
         @keyframes slideUp {
@@ -289,6 +247,21 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
         
         .animate-slideUp {
           animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes dropdownFade {
+          from {
+            opacity: 0;
+            transform: translateY(-8px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        .animate-dropdown {
+          animation: dropdownFade 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
       `}</style>
     </>

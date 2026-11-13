@@ -23,8 +23,12 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
         slug: initialData?.slug || '',
+        duration: initialData?.duration || '',
         short_description: initialData?.short_description || '',
         long_description: initialData?.long_description || '',
+        background: initialData?.background || '',
+        implementation: initialData?.implementation || '',
+        struggle: initialData?.struggle || '',
         images: initialData?.images || [], // Array of URLs
         tech_stack: initialData?.tech_stack || [],
         repo_link: initialData?.repo_link || '',
@@ -135,6 +139,19 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                         </select>
                     </div>
 
+                    <div>
+                        <label htmlFor="project-duration" className="mb-1 block text-sm font-medium text-[#CCCCCC]">Duration</label>
+                        <input
+                            id="project-duration"
+                            type="text"
+                            name="duration"
+                            value={formData.duration}
+                            onChange={handleChange}
+                            placeholder="e.g. 3 Months (Jan - Mar 2026)"
+                            className="w-full rounded-lg border border-[#333333] bg-[#141414] px-3 py-2 text-sm text-white focus:border-[#6DD33D] focus:outline-none focus:ring-1 focus:ring-[#6DD33D]"
+                        />
+                    </div>
+
                     <ProjectTextEditor
                         id="project-short-description"
                         label="Short Description"
@@ -204,15 +221,51 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                 </div>
             </div>
 
-            <ProjectTextEditor
-                id="project-long-description"
-                label="Long Description"
-                value={formData.long_description}
-                onChange={(long_description) => setFormData((current) => ({ ...current, long_description }))}
-                minHeight="min-h-48"
-                placeholder="Full project details..."
-                allowLegacyHtml
-            />
+            <div className="space-y-6 pt-4 border-t border-[#1f1f1f]">
+                <h3 className="text-base font-bold text-[#6DD33D] uppercase tracking-wider">
+                    Engineering Case Study Sections
+                </h3>
+
+                <ProjectTextEditor
+                    id="project-background"
+                    label="1. Background (Why this project was created)"
+                    value={formData.background}
+                    onChange={(background) => setFormData((current) => ({ ...current, background }))}
+                    minHeight="min-h-36"
+                    placeholder="Describe the context, problem statement, and motivation behind this project..."
+                    allowLegacyHtml
+                />
+
+                <ProjectTextEditor
+                    id="project-implementation"
+                    label="2. Implementation (What you built & Tech elaboration)"
+                    value={formData.implementation}
+                    onChange={(implementation) => setFormData((current) => ({ ...current, implementation }))}
+                    minHeight="min-h-48"
+                    placeholder="Elaborate what was built, system architecture, core features, and technical trade-offs..."
+                    allowLegacyHtml
+                />
+
+                <ProjectTextEditor
+                    id="project-struggle"
+                    label="3. Struggles & Key Learnings (Challenges during development)"
+                    value={formData.struggle}
+                    onChange={(struggle) => setFormData((current) => ({ ...current, struggle }))}
+                    minHeight="min-h-36"
+                    placeholder="Discuss technical bottlenecks, debugging hurdles, and lessons learned..."
+                    allowLegacyHtml
+                />
+
+                <ProjectTextEditor
+                    id="project-long-description"
+                    label="Additional / Legacy Long Description"
+                    value={formData.long_description}
+                    onChange={(long_description) => setFormData((current) => ({ ...current, long_description }))}
+                    minHeight="min-h-32"
+                    placeholder="Any general project details or fallback description..."
+                    allowLegacyHtml
+                />
+            </div>
 
             <div className="flex justify-end pt-4 border-t border-[#1f1f1f]">
                 <button

@@ -11,15 +11,12 @@ const HeroSection: React.FC<{ profile: Profile }> = ({ profile }) => {
     // 'grid-cols-[auto_1fr]' membuat kolom kiri otomatis (foto) dan kanan sisa ruang (nama)
     <section className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-4 md:flex md:flex-row md:items-start md:space-x-8 md:mb-4 font-space-grotesk">
 
-      {/* UBAH 2: Bungkus HeroImage dengan container bergaya "Kartu" */}
-      {/* row-span-2 artinya di mobile dia makan tinggi baris tapi tidak lebar penuh */}
+      {/* Profile Photo Card */}
       <div className="row-span-1 md:w-auto shrink-0">
-        <div className="bg-[#141415] border border-[#333333] rounded-2xl overflow-hidden w-25 h-27.5 md:w-auto md:h-auto flex items-end justify-center pt-2">
-          {/* Kita atur ukuran HeroImage agar pas di dalam kotak */}
-          <div className="w-24 md:w-70 md:h-70">
-            <HeroImage src={profile.avatar_url} />
-          </div>
-        </div>
+        <HeroImage 
+          src={profile.avatar_url} 
+          className="w-24 h-28 sm:w-28 sm:h-32 md:w-64 md:h-72" 
+        />
       </div>
 
       {/* Content Wrapper - Dipecah agar responsif */}
