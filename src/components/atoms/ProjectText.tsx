@@ -8,16 +8,16 @@ export function ProjectTitle({ value }: { value: string }) {
 
 export function ProjectText({
     value,
-    className,
+    className = '',
     allowLegacyHtml = false,
 }: {
     value: string;
-    className: string;
+    className?: string;
     allowLegacyHtml?: boolean;
 }) {
     return (
         <div
-            className={`project-text ${className}`}
+            className={`project-text ${className}`.trim()}
             dangerouslySetInnerHTML={{ __html: projectTextHtml(value, allowLegacyHtml) }}
         />
     );

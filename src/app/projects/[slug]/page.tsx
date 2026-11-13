@@ -231,7 +231,7 @@ export default function ProjectDetailPage() {
             {/* Short Description Lead */}
             {project.short_description && (
               <div className="text-base sm:text-lg text-[#999999] leading-relaxed max-w-4xl">
-                <ProjectText value={project.short_description} />
+                <ProjectText value={project.short_description} className="text-base sm:text-lg text-[#999999] leading-relaxed" />
               </div>
             )}
 
@@ -337,7 +337,7 @@ export default function ProjectDetailPage() {
 
               <div className="text-sm md:text-base text-[#bbb] leading-relaxed pt-2 border-t border-[#1a1a1c]">
                 {project.background ? (
-                  <ProjectText value={project.background} allowLegacyHtml />
+                  <ProjectText value={project.background} className="text-sm md:text-base text-[#bbb] leading-relaxed" allowLegacyHtml />
                 ) : (
                   <p className="italic text-[#777]">
                     This project was created to address real-world workflows, solve technical challenges, and build an intuitive, efficient solution tailored to user needs.
@@ -362,6 +362,7 @@ export default function ProjectDetailPage() {
                 {project.implementation || project.long_description ? (
                   <ProjectText 
                     value={project.implementation || project.long_description} 
+                    className="text-sm md:text-base text-[#bbb] leading-relaxed"
                     allowLegacyHtml 
                   />
                 ) : (
@@ -386,7 +387,7 @@ export default function ProjectDetailPage() {
 
               <div className="text-sm md:text-base text-[#bbb] leading-relaxed pt-2 border-t border-[#1a1a1c]">
                 {project.struggle ? (
-                  <ProjectText value={project.struggle} allowLegacyHtml />
+                  <ProjectText value={project.struggle} className="text-sm md:text-base text-[#bbb] leading-relaxed" allowLegacyHtml />
                 ) : (
                   <p className="italic text-[#777]">
                     Overcoming complex state synchronization, latency optimization, and responsive design edge cases provided crucial insights and refined engineering skills throughout this project&apos;s development lifecycle.
