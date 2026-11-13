@@ -3,19 +3,23 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import supabase from '../../../lib/supabase/client';
-import ImageUploader from './ImageUploader';
 import MultiImageUploader from './MultiImageUploader';
+import ProjectTextEditor from './ProjectTextEditor';
 import TagInput from './TagInput';
 import { Loader2, Save } from 'lucide-react';
+import { getProjectCategory, PROJECT_CATEGORIES } from '@/src/lib/projectCategories';
+import { plainProjectTitle } from '@/src/lib/projectText';
+import { Project } from '@/src/types/project';
 
 interface ProjectFormProps {
-    initialData?: any;
-    isEdit?: boolean;
+    initialData?: Project;
 }
 
-export default function ProjectForm({ initialData, isEdit = false }: ProjectFormProps) {
+export default function ProjectForm({ initialData }: ProjectFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [titleError, setTitleError] = useState('');
+    const [slugEdited, setSlugEdited] = useState(false);
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
         slug: initialData?.slug || '',
@@ -25,43 +29,51 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
         tech_stack: initialData?.tech_stack || [],
         repo_link: initialData?.repo_link || '',
         demo_link: initialData?.demo_link || '',
-        category: initialData?.category || 'Web App',
+        category: getProjectCategory(initialData?.category),
         is_featured: initialData?.is_featured || false,
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-        setFormData({ ...formData, [e.target.name]: value });
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        const { name } = e.target;
+        if (name === 'slug') setSlugEdited(true);
+        setFormData((current) => ({ ...current, [name]: value }));
     };
 
-    const handleSlugGen = () => {
-        const slug = formData.title
+    const handleTitleChange = (title: string, plainText: string) => {
+        if (plainText.trim()) setTitleError('');
+        const generatedSlug = plainText
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/(^-|-$)+/g, '');
-        setFormData({ ...formData, slug });
+        setFormData((current) => ({
+            ...current,
+            title,
+            slug: initialData || slugEdited ? current.slug : generatedSlug,
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!plainProjectTitle(formData.title).trim()) {
+            setTitleError('Enter a project title.');
+            document.getElementById('project-title')?.focus();
+            return;
+        }
         setLoading(true);
 
         try {
-            const dataToSave = {
-                ...formData,
-            };
-
             let error;
-            if (isEdit) {
+            if (initialData) {
                 const { error: updateError } = await supabase
                     .from('projects')
-                    .update(dataToSave)
+                    .update(formData)
                     .eq('id', initialData.id);
                 error = updateError;
             } else {
                 const { error: insertError } = await supabase
                     .from('projects')
-                    .insert([dataToSave]);
+                    .insert([formData]);
                 error = insertError;
             }
 
@@ -69,8 +81,9 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
 
             router.push('/admin/projects');
             router.refresh();
-        } catch (error: any) {
-            alert('Error saving project: ' + error.message);
+        } catch (error) {
+            const message = error && typeof error === 'object' && 'message' in error ? error.message : error;
+            alert('Error saving project: ' + message);
         } finally {
             setLoading(false);
         }
@@ -81,22 +94,20 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
             <div className="grid gap-8 md:grid-cols-2">
                 {/* Left Column: Basic Info */}
                 <div className="space-y-6">
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-[#CCCCCC]">Title</label>
-                        <input
-                            type="text"
-                            name="title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            onBlur={!isEdit && !formData.slug ? handleSlugGen : undefined}
-                            required
-                            className="w-full rounded-lg border border-[#333333] bg-[#141414] px-3 py-2 text-sm text-white focus:border-[#6DD33D] focus:outline-none focus:ring-1 focus:ring-[#6DD33D]"
-                        />
-                    </div>
+                    <ProjectTextEditor
+                        id="project-title"
+                        label="Title"
+                        value={formData.title}
+                        onChange={handleTitleChange}
+                        minHeight="min-h-9"
+                        required
+                        error={titleError}
+                    />
 
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-[#CCCCCC]">Slug</label>
+                        <label htmlFor="project-slug" className="mb-1 block text-sm font-medium text-[#CCCCCC]">Slug</label>
                         <input
+                            id="project-slug"
                             type="text"
                             name="slug"
                             value={formData.slug}
@@ -107,43 +118,31 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
                     </div>
 
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-[#CCCCCC]">Category</label>
+                        <label htmlFor="project-category" className="mb-1 block text-sm font-medium text-[#CCCCCC]">Category</label>
                         <select
+                            id="project-category"
                             name="category"
                             value={formData.category}
-                            onChange={handleChange}
+                            onChange={(event) => {
+                                const category = getProjectCategory(event.target.value);
+                                setFormData((current) => ({ ...current, category }));
+                            }}
                             className="w-full rounded-lg border border-[#333333] bg-[#141414] px-3 py-2 text-sm text-white focus:border-[#6DD33D] focus:outline-none focus:ring-1 focus:ring-[#6DD33D]"
                         >
-                            <option value="Web App">Web App</option>
-                            <option value="Mobile App">Mobile App</option>
-                            <option value="Desktop App">Desktop App</option>
-                            <option value="Design">Design</option>
+                            {PROJECT_CATEGORIES.map((category) => (
+                                <option key={category} value={category}>{category}</option>
+                            ))}
                         </select>
                     </div>
 
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-[#CCCCCC]">Short Description</label>
-                        <textarea
-                            name="short_description"
-                            value={formData.short_description}
-                            onChange={handleChange}
-                            rows={3}
-                            placeholder="Brief summary for cards..."
-                            className="w-full rounded-lg border border-[#333333] bg-[#141414] px-3 py-2 text-sm text-white focus:border-[#6DD33D] focus:outline-none focus:ring-1 focus:ring-[#6DD33D]"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-1 block text-sm font-medium text-[#CCCCCC]">Long Description (Markdown)</label>
-                        <textarea
-                            name="long_description"
-                            value={formData.long_description}
-                            onChange={handleChange}
-                            rows={8}
-                            placeholder="Full project details..."
-                            className="w-full rounded-lg border border-[#333333] bg-[#141414] px-3 py-2 text-sm text-white focus:border-[#6DD33D] focus:outline-none focus:ring-1 focus:ring-[#6DD33D]"
-                        />
-                    </div>
+                    <ProjectTextEditor
+                        id="project-short-description"
+                        label="Short Description"
+                        value={formData.short_description}
+                        onChange={(short_description) => setFormData((current) => ({ ...current, short_description }))}
+                        minHeight="min-h-24"
+                        placeholder="Brief summary for cards..."
+                    />
                 </div>
 
                 {/* Right Column: Media, Links, Tech */}
@@ -164,7 +163,7 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
                         <label className="mb-1 block text-sm font-medium text-[#CCCCCC]">Project Gallery (Multi-upload)</label>
                         <MultiImageUploader
                             defaultImages={formData.images}
-                            onUpload={(urls) => setFormData({ ...formData, images: urls })}
+                            onUpload={(images) => setFormData((current) => ({ ...current, images }))}
                         />
                         <p className="mt-1 text-xs text-[#666666]">First image will be used as a thumbnail if needed.</p>
                     </div>
@@ -173,7 +172,7 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
                         <label className="mb-1 block text-sm font-medium text-[#CCCCCC]">Tech Stack</label>
                         <TagInput
                             value={formData.tech_stack || []}
-                            onChange={(tags) => setFormData({ ...formData, tech_stack: tags })}
+                            onChange={(tech_stack) => setFormData((current) => ({ ...current, tech_stack }))}
                             placeholder="Add tech (e.g. Next.js, OpenAI)..."
                         />
                     </div>
@@ -205,6 +204,16 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
                 </div>
             </div>
 
+            <ProjectTextEditor
+                id="project-long-description"
+                label="Long Description"
+                value={formData.long_description}
+                onChange={(long_description) => setFormData((current) => ({ ...current, long_description }))}
+                minHeight="min-h-48"
+                placeholder="Full project details..."
+                allowLegacyHtml
+            />
+
             <div className="flex justify-end pt-4 border-t border-[#1f1f1f]">
                 <button
                     type="submit"
@@ -212,7 +221,7 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
                     className="flex items-center gap-2 rounded-lg bg-[#6DD33D] px-6 py-2.5 text-sm font-bold text-black shadow-lg hover:bg-[#5bc232] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6DD33D] disabled:opacity-50 transition-all active:scale-95"
                 >
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    {isEdit ? 'Update Project' : 'Create Project'}
+                    {initialData ? 'Update Project' : 'Create Project'}
                 </button>
             </div>
         </form>

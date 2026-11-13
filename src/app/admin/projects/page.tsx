@@ -5,9 +5,12 @@ import Link from 'next/link';
 import { Plus, Loader2, Star } from 'lucide-react';
 import supabase from '../../../lib/supabase/client';
 import DataTable, { Column } from '../_components/DataTable';
+import { ProjectTitle } from '@/src/components/atoms/ProjectText';
+import { getProjectCategory } from '@/src/lib/projectCategories';
+import { Project } from '@/src/types/project';
 
 export default function ProjectsPage() {
-    const [projects, setProjects] = useState<any[]>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchProjects = async () => {
@@ -45,27 +48,30 @@ export default function ProjectsPage() {
             // Only update state if delete was successful
             setProjects((prev) => prev.filter((p) => p.id !== id));
             alert('Project deleted successfully');
-        } catch (error: any) {
-            alert('Error deleting project: ' + error.message);
+        } catch (error) {
+            const message = error && typeof error === 'object' && 'message' in error ? error.message : error;
+            alert('Error deleting project: ' + message);
             console.error(error);
         }
     };
 
-    const columns: Column<any>[] = [
+    const columns: Column<Project>[] = [
         {
             header: 'Title',
             accessorKey: (row) => (
                 <div className="flex items-center gap-2">
-                    <span className="font-medium text-white">{row.title}</span>
+                    <span className="font-medium text-white"><ProjectTitle value={row.title} /></span>
                     {row.is_featured && <Star className="h-3 w-3 fill-[#6DD33D] text-[#6DD33D]" />}
                 </div>
             )
         },
-        { header: 'Category', accessorKey: 'category' },
+        { header: 'Category', accessorKey: (row) => getProjectCategory(row.category) },
         { header: 'Slug', accessorKey: 'slug' },
         {
             header: 'Tech Stack',
-            accessorKey: (row) => row.tech_stack?.slice(0, 3).join(', ') + (row.tech_stack?.length > 3 ? '...' : '') || '-'
+            accessorKey: (row) => row.tech_stack?.length
+                ? row.tech_stack.slice(0, 3).join(', ') + (row.tech_stack.length > 3 ? '...' : '')
+                : '-'
         },
     ];
 

@@ -2,6 +2,9 @@
 import React from 'react';
 import Image from 'next/image';
 import { Project } from '@/src/types/project';
+import { ProjectText, ProjectTitle } from '../atoms/ProjectText';
+import { getProjectCategory } from '@/src/lib/projectCategories';
+import { isRichProjectText, plainProjectTitle } from '@/src/lib/projectText';
 
 interface ProjectCardProps {
   project: Project;
@@ -19,7 +22,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, isMobile, t
       <div className={`relative overflow-hidden w-full ${isMobile ? 'h-28' : 'h-48'}`}>
   <Image
     src={project.images[0]}
-    alt={project.title}
+    alt={plainProjectTitle(project.title)}
     // Menggunakan fill agar gambar mengikuti ukuran div pembungkus
     fill 
     // object-cover memastikan gambar memenuhi area tanpa menjadi penyok
@@ -36,11 +39,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, isMobile, t
 </div>
       <div className="p-4">
         <h3 className={`font-bold text-white mb-2 group-hover:text-blue-500 transition-colors duration-200 truncate ${isMobile ? 'text-sm' : 'text-md'}`}>
-          {project.title}
+          <ProjectTitle value={project.title} />
         </h3>
-        <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} leading-relaxed mb-3 line-clamp-2`}>
-          {truncateText(project.short_description)}
-        </p>
+        <ProjectText
+          className={`${isMobile ? 'text-[10px]' : 'text-xs'} leading-relaxed mb-3 line-clamp-2`}
+          value={isRichProjectText(project.short_description) ? project.short_description : truncateText(project.short_description ?? '')}
+        />
         <button
           className="inline-flex items-center gap-2 px-3 py-2 bg-[#1f1f1f] text-[#CCCCCC] hover:bg-gray-800 text-xs font-medium rounded-lg transition-colors"
           onClick={(e) => {
@@ -63,13 +67,14 @@ interface ProjectBadgeProps {
 }
 
 const ProjectBadge: React.FC<ProjectBadgeProps> = ({ label }) => {
-  const labelStyles = label === 'Software Development' 
+  const category = getProjectCategory(label);
+  const labelStyles = category === 'Software Development'
     ? 'bg-blue-100 text-blue-800 border-blue-200'
     : 'bg-green-100 text-green-800 border-green-200';
 
   return (
     <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full border backdrop-blur-sm bg-opacity-90 ${labelStyles}`}>
-      {label}
+      {category}
     </span>
   );
 };

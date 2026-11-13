@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import { ExternalLink } from 'lucide-react';
 import { Project } from '@/src/types/project';
+import { ProjectText, ProjectTitle } from '../atoms/ProjectText';
+import { getProjectCategory } from '@/src/lib/projectCategories';
+import { plainProjectTitle } from '@/src/lib/projectText';
 
 
 interface ProjectTechBadgeProps {
@@ -29,7 +32,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
         <div className="relative h-48 md:h-64 lg:h-72 w-full overflow-hidden rounded-2xl">
           <Image
             src={project.images[0]}
-            alt={project.title}
+            alt={plainProjectTitle(project.title)}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -41,7 +44,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
       <div className="w-full md:w-1/2 px-6 py-6 md:py-8 flex flex-col justify-center">
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-xl md:text-2xl font-bold text-white line-clamp-2">
-            {project.title}
+            <ProjectTitle value={project.title} />
           </h3>
           <a
             href={project.repo_link}
@@ -57,16 +60,14 @@ const ProjectCard = ({ project }: { project: Project }) => {
         {/* Badges & Meta */}
         <div className="flex flex-wrap gap-2 mb-4">
           <span className="bg-[#1f1f1f] text-[#999999] text-[10px] md:text-xs px-2 py-1 rounded-full">
-            {project.category}
+            {getProjectCategory(project.category)}
           </span>
           <span className="bg-[#1f1f1f] text-[#999999] text-[10px] md:text-xs px-2 py-1 rounded-full">
             {project.duration}
           </span>
         </div>
 
-        <p className="text-sm md:text-base text-[#999999] line-clamp-2 mb-6">
-          {project.short_description}
-        </p>
+        <ProjectText value={project.short_description} className="text-sm md:text-base text-[#999999] line-clamp-2 mb-6" />
 
         {/* Tech Stack List */}
         <div className="flex flex-wrap gap-2">

@@ -4,10 +4,11 @@ import { useEffect, useState, use } from 'react';
 import supabase from '../../../../lib/supabase/client';
 import ProjectForm from '../../_components/ProjectForm';
 import { Loader2 } from 'lucide-react';
+import { Project } from '@/src/types/project';
 
 export default function EditProjectPage(props: { params: Promise<{ id: string }> }) {
     const params = use(props.params);
-    const [project, setProject] = useState(null);
+    const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -46,7 +47,7 @@ export default function EditProjectPage(props: { params: Promise<{ id: string }>
     return (
         <div className="space-y-6">
             <h1 className="text-2xl font-bold text-white">Edit Project</h1>
-            <ProjectForm initialData={project} isEdit />
+            <ProjectForm key={project.id} initialData={project} />
         </div>
     );
 }

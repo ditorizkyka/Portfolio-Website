@@ -6,13 +6,19 @@ import { ProjectCard, ProjectBadge } from '../../molecules/ProjectCard';
 import ScrambleText from "../../atoms/buttonAnimation";
 import { Project } from '@/src/types/project';
 import Image from 'next/image';
+import { ProjectText, ProjectTitle } from '../../atoms/ProjectText';
+import { getProjectCategory, PROJECT_CATEGORIES } from '@/src/lib/projectCategories';
+import { plainProjectTitle } from '@/src/lib/projectText';
+
+const PROJECTS_PER_LOAD = 9;
+const PROJECT_FILTERS = ['All Projects', ...PROJECT_CATEGORIES] as const;
+type ProjectFilter = typeof PROJECT_FILTERS[number];
 
 const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [visibleCount, setVisibleCount] = useState<number>(9);
-  
-  const PROJECTS_PER_LOAD = 9;
+  const [filter, setFilter] = useState<ProjectFilter>('All Projects');
+  const [visibleCount, setVisibleCount] = useState(PROJECTS_PER_LOAD);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -41,20 +47,24 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
 
   const closeDialog = () => setSelectedProject(null);
 
-  const loadMore = () => {
-    setVisibleCount(prev => Math.min(prev + PROJECTS_PER_LOAD, projects.length));
+  const selectFilter = (nextFilter: ProjectFilter) => {
+    if (nextFilter === filter) return;
+    setFilter(nextFilter);
+    setVisibleCount(PROJECTS_PER_LOAD);
   };
 
-  // Get visible projects
-  const visibleProjects = projects.slice(0, visibleCount);
-  const hasMore = visibleCount < projects.length;
+  const filteredProjects = filter === 'All Projects'
+    ? projects
+    : projects.filter((project) => getProjectCategory(project.category) === filter);
+  const visibleProjects = filteredProjects.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredProjects.length;
 
   return (
     <>
       <section className="bg-black min-h-screen text-left  md:px-0 font-space-grotesk">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8 md:mb-16">
+          <div className="mb-6 md:mb-10">
             <div className="flex items-center gap-3 mb-4 md:mb-6">
               <Shapes className="w-7 h-7 md:w-8 md:h-8 text-white" />
               <h1 className="text-xl md:text-4xl font-bold text-white">All projects details</h1>
@@ -63,6 +73,26 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
               Formulating comprehensive strategies to meet your design goals and exceed expectations.
             </p>
           </div>
+
+          <div role="group" aria-label="Filter projects by category" className="mb-6 flex flex-wrap gap-2 md:mb-8">
+            {PROJECT_FILTERS.map((option) => (
+              <button
+                key={option}
+                type="button"
+                aria-pressed={filter === option}
+                onClick={() => selectFilter(option)}
+                className="rounded-lg border border-[#333] bg-[#141415] px-3 py-2 text-xs font-semibold text-[#ccc] transition-colors hover:bg-[#222] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6DD33D] aria-pressed:border-[#6DD33D] aria-pressed:bg-[#6DD33D] aria-pressed:text-black md:px-4 md:text-sm"
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+
+          <p role="status" className={filteredProjects.length ? 'sr-only' : 'mb-10 rounded-xl border border-[#333] p-6 text-sm text-[#ccc]'}>
+            {filteredProjects.length
+              ? `Showing ${visibleProjects.length} of ${filteredProjects.length} projects`
+              : 'No projects found.'}
+          </p>
 
           {/* Projects Grid */}
           <div className={`grid gap-4 md:gap-8 mb-10 ${isMobile ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
@@ -81,7 +111,7 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
           {hasMore && (
             <div className="flex justify-center mb-10">
               <button
-                onClick={loadMore}
+                onClick={() => setVisibleCount((count) => Math.min(count + PROJECTS_PER_LOAD, filteredProjects.length))}
                 className="group flex items-center gap-3 bg-[#141415] hover:bg-[#1f1f20] px-8 py-4 rounded-xl transition-all duration-300 border border-[#333] hover:border-[#555]"
               >
                 <ScrambleText 
@@ -139,7 +169,7 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
             <div className="relative w-full h-56 md:h-72 overflow-hidden rounded-t-2xl">
               <Image
                 src={selectedProject.images[0]}
-                alt={selectedProject.title}
+                alt={plainProjectTitle(selectedProject.title)}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 1200px"
@@ -155,7 +185,7 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
               {/* Title Overlay */}
               <div className="absolute bottom-4 left-6 right-6">
                 <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
-                  {selectedProject.title}
+                  <ProjectTitle value={selectedProject.title} />
                 </h2>
               </div>
             </div>
@@ -192,17 +222,16 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
               {/* Description */}
               <div>
                 <h4 className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wider">Deskripsi</h4>
-                <p className="text-gray-300 text-sm md:text-base leading-7">
-                  {selectedProject.short_description}
-                </p>
+                <ProjectText value={selectedProject.short_description} className="text-gray-300 text-sm md:text-base leading-7" />
               </div>
 
               {/* Implementation */}
               <div>
                 <h4 className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wider">Implementasi</h4>
-                <div 
-                  className="text-gray-300 text-sm md:text-base leading-7 space-y-2"
-                  dangerouslySetInnerHTML={{ __html: selectedProject.long_description }}
+                <ProjectText
+                  value={selectedProject.long_description}
+                  className="text-gray-300 text-sm md:text-base leading-7"
+                  allowLegacyHtml
                 />
               </div>
 
