@@ -185,7 +185,7 @@ const ProjectShowcase: React.FC<{ projects: Project[] }> = ({ projects }) => {
           </p>
 
           {/* Projects Grid */}
-          <div className={`grid gap-4 md:gap-8 mb-10 ${isMobile ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-10">
             {visibleProjects.map((project) => (
               <ProjectCard
                 key={project.id}

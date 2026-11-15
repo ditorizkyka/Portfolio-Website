@@ -107,12 +107,9 @@ const PortfolioPage: React.FC = () => {
           - Desktop: md:px-40 md:pt-32 (memberi ruang untuk StatusBar & Sidebars)
       */}
       <main className="relative z-10 px-6 pt-20 pb-20 md:px-50 md:pt-20 md:pb-32">
-        <div className="max-w-5xl mx-auto space-y-20 md:space-y-32">
+        <div className="max-w-7xl mx-auto space-y-12 md:space-y-20 lg:space-y-32">
           <CarouselSection carousels={carousel} />
           <ProjectShowcase projects={projects} />
-          {/* <MyTopProjects projects={projects} /> */}
-         {/* Tambahkan bagian lain di sini sesuai kebutuhan */}
-
         </div>
       </main>
 
