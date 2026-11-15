@@ -2,11 +2,11 @@ import sanitizeHtml from 'sanitize-html';
 
 const richTextMarker = '<!--project-rich-text-->';
 const headingTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
-const inlineTags = ['strong', 'b', 'em', 'i', 'u', 's', 'strike', 'del', 'code', 'span', 'br'];
+const inlineTags = ['strong', 'b', 'em', 'i', 'u', 's', 'strike', 'del', 'code', 'span', 'mark', 'br'];
 const blockTags = ['p', 'div', ...headingTags, 'blockquote', 'ul', 'ol', 'li', 'pre', 'hr'];
 const sanitizeOptions: sanitizeHtml.IOptions = {
     allowedTags: [...inlineTags, ...blockTags, 'a'],
-    allowedAttributes: { a: ['href', 'title'], ol: ['start'] },
+    allowedAttributes: { a: ['href', 'title'], ol: ['start'], mark: ['class', 'style', 'data-color'] },
     allowedSchemes: ['http', 'https', 'mailto', 'tel'],
     allowProtocolRelative: false,
 };

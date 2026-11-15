@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { X, Calendar, UsersRound } from 'lucide-react';
 import { SoftSkill } from '@/src/types/softSkills';
 import Image from 'next/image';
+import ProjectCard, { getBadgeColor } from '@/src/components/molecules/ProjectCard';
 
 export default function SocialSkills({ social }: { social: SoftSkill[] }) {
   const [selectedSocial, setSelectedSocial] = useState<SoftSkill | null>(null);
@@ -42,51 +43,7 @@ export default function SocialSkills({ social }: { social: SoftSkill[] }) {
     return text;
   };
 
-  const getLabelColor = (label: string): string => {
-    return label === 'Organization'
-      ? 'bg-blue-100 text-blue-800 border-blue-200'
-      : 'bg-green-100 text-green-800 border-green-200';
-  };
-
   const closeDialog = () => setSelectedSocial(null);
-
-  const ProjectCard = ({ social }: { social: SoftSkill }) => (
-    <div
-      className="bg-[#0A0A0B]  border border-[#1f1f1f] rounded-xl shadow-lg overflow-hidden hover:shadow-xl hover:border-gray-700 transition-all duration-300 group cursor-pointer flex flex-col h-full"
-      onClick={() => setSelectedSocial(social)}
-    >
-      <div className="relative h-40 md:h-48 w-full overflow-hidden">
-        <Image
-          src={social.image_url}
-          alt={social.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 50vw, 33vw"
-        />
-        <div className="absolute top-3 right-3 z-10">
-          <span className={`inline-block px-3 py-1 text-[10px] md:text-xs font-bold rounded-full border backdrop-blur-md shadow-sm ${getLabelColor(social.label)}`}>
-            {social.label}
-          </span>
-        </div>
-      </div>
-
-      <div className="p-3 md:p-4 flex flex-col grow">
-        <h3 className="text-white text-sm md:text-lg font-bold mb-2 line-clamp-1 group-hover:text-blue-500 transition-colors">
-          {social.title}
-        </h3>
-        
-        <div className="mb-3">
-          <span className="inline-block bg-[#1f1f1f] text-[#999999] text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-lg border border-white/5 truncate max-w-full">
-            {social.role}
-          </span>
-        </div>
-       
-        <p className="text-[#999999] text-[10px] md:text-xs leading-relaxed line-clamp-2 md:line-clamp-3">
-          {truncateText(social.description)}
-        </p>
-      </div>
-    </div>
-  );
 
   return (
     <section className="bg-black mb-20 md:mb-20 text-left font-space-grotesk">
@@ -106,7 +63,11 @@ export default function SocialSkills({ social }: { social: SoftSkill[] }) {
         {/* Grid: 2 kolom di mobile, 2 di tablet, 3 di desktop */}
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-10">
           {social.map((item) => (
-            <ProjectCard key={item.id} social={item} />
+            <ProjectCard
+              key={item.id}
+              social={item}
+              onClick={() => setSelectedSocial(item)}
+            />
           ))}
         </div>
       </div>
@@ -137,7 +98,7 @@ export default function SocialSkills({ social }: { social: SoftSkill[] }) {
               <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0B] via-transparent to-transparent" />
               
               <div className="absolute bottom-4 left-4 md:left-6 right-4 md:right-6">
-                <span className={`inline-block px-2 md:px-3 py-1 text-[10px] md:text-xs font-bold rounded-full border backdrop-blur-md mb-2 md:mb-3 ${getLabelColor(selectedSocial.label)}`}>
+                <span className={`inline-block px-2 md:px-3 py-1 text-[10px] md:text-xs font-bold rounded-full border backdrop-blur-md mb-2 md:mb-3 ${getBadgeColor(selectedSocial.label)}`}>
                   {selectedSocial.label}
                 </span>
                 <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white drop-shadow-lg">

@@ -19,9 +19,6 @@
   }
 }
 
-@import "tailwindcss";
-
-
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -68,12 +65,24 @@ body {
   font-weight: 800;
 }
 
+.project-text mark {
+  background-color: rgba(250, 204, 21, 0.22);
+  color: #fef08a;
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
 .project-text :is(ol, ul) {
   padding-inline-start: 1.5em;
+  margin-block-end: 0.75em;
 }
 
 .project-text ol { list-style: decimal; }
 .project-text ul { list-style: disc; }
+.project-text li { margin-block-end: 0.25em; }
 .project-text a { color: #8be65e; text-decoration: underline; }
 .project-text blockquote { border-inline-start: 2px solid #555; padding-inline-start: 0.75em; }
 .project-text pre { white-space: pre-wrap; }

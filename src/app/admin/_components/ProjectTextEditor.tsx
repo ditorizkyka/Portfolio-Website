@@ -1,20 +1,54 @@
 'use client';
 
-import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
+import { EditorContent, Mark, mergeAttributes, useEditor, useEditorState } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { Bold, Italic, Underline } from 'lucide-react';
+import UnderlineExtension from '@tiptap/extension-underline';
+import { Bold, Italic, Underline as UnderlineIcon, Highlighter, List, ListOrdered } from 'lucide-react';
 import { useState } from 'react';
 import { projectTextHtml, storeRichProjectText } from '@/src/lib/projectText';
 
-const extensions = [StarterKit.configure({
-    link: { openOnClick: false, autolink: false, linkOnPaste: false },
-    trailingNode: false,
-})];
+const Highlight = Mark.create({
+    name: 'highlight',
+    addOptions() {
+        return {
+            HTMLAttributes: {},
+        };
+    },
+    parseHTML() {
+        return [
+            { tag: 'mark' },
+        ];
+    },
+    renderHTML({ HTMLAttributes }) {
+        return ['mark', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
+    },
+    addCommands() {
+        return {
+            toggleHighlight: () => ({ commands }) => commands.toggleMark(this.name),
+        };
+    },
+    addKeyboardShortcuts() {
+        return {
+            'Mod-Shift-h': () => this.editor.commands.toggleMark(this.name),
+            'Mod-Shift-H': () => this.editor.commands.toggleMark(this.name),
+        };
+    },
+});
+
+const extensions = [
+    StarterKit.configure({
+        link: { openOnClick: false, autolink: false, linkOnPaste: false },
+        trailingNode: false,
+    }),
+    UnderlineExtension,
+    Highlight,
+];
 
 const marks = [
     { name: 'bold', label: 'Bold', shortcut: 'Ctrl+B Meta+B', icon: Bold },
     { name: 'italic', label: 'Italic', shortcut: 'Ctrl+I Meta+I', icon: Italic },
-    { name: 'underline', label: 'Underline', shortcut: 'Ctrl+U Meta+U', icon: Underline },
+    { name: 'underline', label: 'Underline', shortcut: 'Ctrl+U Meta+U', icon: UnderlineIcon },
+    { name: 'highlight', label: 'Highlight text', shortcut: 'Ctrl+Shift+H Meta+Shift+H', icon: Highlighter },
 ] as const;
 
 interface ProjectTextEditorProps {
@@ -70,6 +104,9 @@ export default function ProjectTextEditor({
                 bold: editor.isActive('bold'),
                 italic: editor.isActive('italic'),
                 underline: editor.isActive('underline'),
+                highlight: editor.isActive('highlight'),
+                bulletList: editor.isActive('bulletList'),
+                orderedList: editor.isActive('orderedList'),
                 isEmpty: editor.isEmpty,
             };
         },
@@ -98,6 +135,7 @@ export default function ProjectTextEditor({
                         <option value="title">Title</option>
                         <option value="subtitle">Subtitle</option>
                     </select>
+                    <div className="mx-0.5 h-4 w-px bg-[#333333]" />
                     {marks.map(({ name, label, shortcut, icon: Icon }) => (
                         <button
                             key={name}
@@ -114,6 +152,31 @@ export default function ProjectTextEditor({
                             <Icon aria-hidden="true" className="h-4 w-4" />
                         </button>
                     ))}
+                    <div className="mx-0.5 h-4 w-px bg-[#333333]" />
+                    <button
+                        type="button"
+                        title="Bullet list"
+                        aria-label="Bullet list"
+                        aria-pressed={state?.bulletList ?? false}
+                        disabled={!editor}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                        className="rounded p-2 text-[#CCCCCC] hover:bg-[#333333] focus-visible:outline-2 focus-visible:outline-[#6DD33D] aria-pressed:bg-[#6DD33D]/15 aria-pressed:text-[#8BE65E]"
+                    >
+                        <List aria-hidden="true" className="h-4 w-4" />
+                    </button>
+                    <button
+                        type="button"
+                        title="Numbered list (1, 2, 3)"
+                        aria-label="Numbered list (1, 2, 3)"
+                        aria-pressed={state?.orderedList ?? false}
+                        disabled={!editor}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                        className="rounded p-2 text-[#CCCCCC] hover:bg-[#333333] focus-visible:outline-2 focus-visible:outline-[#6DD33D] aria-pressed:bg-[#6DD33D]/15 aria-pressed:text-[#8BE65E]"
+                    >
+                        <ListOrdered aria-hidden="true" className="h-4 w-4" />
+                    </button>
                 </div>
                 <div className={`relative ${minHeight}`}>
                     {placeholder && state?.isEmpty && (

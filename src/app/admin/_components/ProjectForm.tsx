@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import supabase from '../../../lib/supabase/client';
 import MultiImageUploader from './MultiImageUploader';
@@ -20,6 +20,15 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
     const [loading, setLoading] = useState(false);
     const [titleError, setTitleError] = useState('');
     const [slugEdited, setSlugEdited] = useState(false);
+    const [availableTechStacks, setAvailableTechStacks] = useState<{ id: string; name: string; icon_url: string }[]>([]);
+
+    useEffect(() => {
+        const fetchStacks = async () => {
+            const { data } = await supabase.from('tech_stacks').select('id, name, icon_url').order('name');
+            if (data) setAvailableTechStacks(data);
+        };
+        fetchStacks();
+    }, []);
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
         slug: initialData?.slug || '',
@@ -192,6 +201,56 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                             onChange={(tech_stack) => setFormData((current) => ({ ...current, tech_stack }))}
                             placeholder="Add tech (e.g. Next.js, OpenAI)..."
                         />
+                        {availableTechStacks.length > 0 && (
+                            <div className="mt-2.5">
+                                <span className="text-xs text-[#888888] block mb-1.5 font-medium">
+                                    Quick Select from Core Technologies:
+                                </span>
+                                <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-2 rounded-lg border border-[#222222] bg-[#0c0c0e]">
+                                    {availableTechStacks.map((stack) => {
+                                        const isSelected = (formData.tech_stack || []).some(
+                                            (t) => t.toLowerCase().trim() === stack.name.toLowerCase().trim()
+                                        );
+                                        return (
+                                            <button
+                                                key={stack.id}
+                                                type="button"
+                                                onClick={() => {
+                                                    const current = formData.tech_stack || [];
+                                                    if (isSelected) {
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            tech_stack: current.filter(
+                                                                (t) => t.toLowerCase().trim() !== stack.name.toLowerCase().trim()
+                                                            ),
+                                                        }));
+                                                    } else {
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            tech_stack: [...current, stack.name],
+                                                        }));
+                                                    }
+                                                }}
+                                                className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs transition-colors cursor-pointer ${
+                                                    isSelected
+                                                        ? 'bg-[#6DD33D]/20 text-[#6DD33D] border border-[#6DD33D]/40 font-semibold'
+                                                        : 'bg-[#18181a] text-[#888888] border border-[#2a2a2a] hover:text-white hover:border-[#444444]'
+                                                }`}
+                                            >
+                                                {stack.icon_url && (
+                                                    <img
+                                                        src={stack.icon_url}
+                                                        alt={stack.name}
+                                                        className="h-3.5 w-3.5 object-contain"
+                                                    />
+                                                )}
+                                                <span>{stack.name}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

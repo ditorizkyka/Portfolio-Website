@@ -2,88 +2,159 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { Project } from '@/src/types/project';
+import { SoftSkill } from '@/src/types/softSkills';
 import { ProjectText, ProjectTitle } from '../atoms/ProjectText';
 import { getProjectCategory } from '@/src/lib/projectCategories';
 import { isRichProjectText, plainProjectTitle } from '@/src/lib/projectText';
 
-interface ProjectCardProps {
-  project: Project;
-  onClick?: (project: Project) => void;
-  isMobile: boolean;
-  truncateText: (text: string) => string;
-}
-
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, isMobile, truncateText, onClick }) => {
-  const projectHref = `/projects/${project.slug || project.id}`;
-
-  return (
-    <Link
-      href={projectHref}
-      onClick={() => onClick && onClick(project)}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[#222] hover:border-[#38383e] bg-[#0A0A0B] text-[#999999] transition-colors block"
-    >
-      <div>
-        {/* Thumbnail View */}
-        <div className={`relative overflow-hidden w-full ${isMobile ? 'h-32' : 'h-52'} bg-[#121214]`}>
-          <Image
-            src={project.images[0] || '/placeholder.png'}
-            alt={plainProjectTitle(project.title)}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-          <div className="absolute inset-0 bg-linear-to-t from-[#0A0A0B] via-black/20 to-transparent" />
-
-          {/* Category Badge */}
-          <div className="absolute top-3 right-3 z-10">
-            <ProjectBadge label={project.category} />
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="p-4 md:p-5">
-          <h3 className={`font-bold text-white mb-2 line-clamp-1 ${isMobile ? 'text-sm' : 'text-lg'}`}>
-            <ProjectTitle value={project.title} />
-          </h3>
-
-          <ProjectText
-            className={`${isMobile ? 'text-xs' : 'text-xs md:text-sm'} text-[#8A8A8A] leading-relaxed mb-4 line-clamp-2`}
-            value={isRichProjectText(project.short_description) ? project.short_description : truncateText(project.short_description ?? '')}
-          />
-        </div>
-      </div>
-
-      {/* Footer Meta & Action */}
-      <div className="px-4 pb-4 md:px-5 md:pb-5 pt-0 flex items-center justify-between border-t border-[#1a1a1c] mt-2 pt-3">
-        <div className="flex items-center gap-1.5 text-xs font-medium text-[#ccc] group-hover:text-white transition-colors">
-          <span>Read Case Study</span>
-          <ArrowRight className="w-3.5 h-3.5 text-[#888]" />
-        </div>
-
-        {project.duration && (
-          <span className="text-[11px] font-mono text-[#666]">
-            {project.duration}
-          </span>
-        )}
-      </div>
-    </Link>
-  );
+export const getBadgeColor = (label?: string | null): string => {
+  const normalized = label?.trim().toLowerCase() ?? '';
+  if (normalized === 'organization') {
+    return 'bg-blue-100 text-blue-800 border-blue-200';
+  }
+  if (normalized === 'event' || normalized === 'community') {
+    return 'bg-green-100 text-green-800 border-green-200';
+  }
+  if (normalized.includes('ai')) {
+    return 'bg-purple-100 text-purple-800 border-purple-200';
+  }
+  return 'bg-blue-100 text-blue-800 border-blue-200';
 };
 
-interface ProjectBadgeProps {
+export interface ProjectBadgeProps {
   label: string;
+  className?: string;
 }
 
-const ProjectBadge: React.FC<ProjectBadgeProps> = ({ label }) => {
-  const category = getProjectCategory(label);
+export const ProjectBadge: React.FC<ProjectBadgeProps> = ({ label, className = '' }) => {
+  const displayLabel =
+    label === 'Organization' || label === 'Event' || label === 'Community'
+      ? label
+      : getProjectCategory(label);
+  const colorClass = getBadgeColor(label);
 
   return (
-    <span className="inline-block px-2.5 py-0.5 text-[11px] font-medium rounded-full border border-[#333] bg-black/70 backdrop-blur-md text-[#ccc]">
-      {category}
+    <span
+      className={`inline-block px-3 py-1 text-[10px] md:text-xs font-bold rounded-full border backdrop-blur-md shadow-sm ${colorClass} ${className}`.trim()}
+    >
+      {displayLabel}
     </span>
   );
 };
 
-export { ProjectCard, ProjectBadge };
+export interface ProjectCardProps {
+  project?: Project;
+  social?: SoftSkill;
+  title?: string;
+  image?: string;
+  badge?: string;
+  subtitle?: string;
+  description?: string;
+  href?: string;
+  onClick?: (item: any) => void;
+  isMobile?: boolean;
+  truncateText?: (text: string, maxLines?: number) => string;
+  className?: string;
+}
+
+const defaultTruncate = (text: string, maxLines = 2): string => {
+  if (!text) return '';
+  const words = text.split(' ');
+  const maxWords = maxLines * 15;
+  return words.length > maxWords ? words.slice(0, maxWords).join(' ') + '...' : text;
+};
+
+const ProjectCard: React.FC<ProjectCardProps> = ({
+  project,
+  social,
+  title,
+  image,
+  badge,
+  subtitle,
+  description,
+  href,
+  onClick,
+  truncateText = defaultTruncate,
+  className = '',
+}) => {
+  const cardTitle = title ?? project?.title ?? social?.title ?? '';
+  const cardImage = image ?? project?.images?.[0] ?? social?.image_url ?? '/placeholder.png';
+  const cardBadge = badge ?? (project ? getProjectCategory(project.category) : social?.label ?? '');
+  const cardSubtitle =
+    subtitle ??
+    (project
+      ? (project.duration || getProjectCategory(project.category))
+      : social?.role ?? '');
+  const rawDescription = description ?? project?.short_description ?? social?.description ?? '';
+  const cardHref = href ?? (project ? `/projects/${project.slug || project.id}` : undefined);
+
+  const cardContent = (
+    <>
+      {/* Thumbnail View */}
+      <div className="relative h-40 md:h-48 w-full overflow-hidden bg-[#121214]">
+        <Image
+          src={cardImage}
+          alt={plainProjectTitle(cardTitle)}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 50vw, 33vw"
+        />
+        {cardBadge && (
+          <div className="absolute top-3 right-3 z-10">
+            <ProjectBadge label={cardBadge} />
+          </div>
+        )}
+      </div>
+
+      {/* Info Body */}
+      <div className="p-3 md:p-4 flex flex-col grow">
+        <h3 className="text-white text-sm md:text-lg font-bold mb-2 line-clamp-1 group-hover:text-blue-500 transition-colors">
+          <ProjectTitle value={cardTitle} />
+        </h3>
+
+        {cardSubtitle && (
+          <div className="mb-3">
+            <span className="inline-block bg-[#1f1f1f] text-[#999999] text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-lg border border-white/5 truncate max-w-full">
+              {cardSubtitle}
+            </span>
+          </div>
+        )}
+
+        <div className="text-[#999999] text-[10px] md:text-xs leading-relaxed line-clamp-2 md:line-clamp-3">
+          {isRichProjectText(rawDescription) ? (
+            <ProjectText value={rawDescription} />
+          ) : (
+            <p>{truncateText(rawDescription, 2)}</p>
+          )}
+        </div>
+      </div>
+    </>
+  );
+
+  const commonClass = `bg-[#0A0A0B] border border-[#1f1f1f] rounded-xl shadow-lg overflow-hidden hover:shadow-xl hover:border-gray-700 transition-all duration-300 group cursor-pointer flex flex-col h-full text-left ${className}`.trim();
+
+  if (cardHref) {
+    return (
+      <Link
+        href={cardHref}
+        onClick={() => onClick && onClick(project || social)}
+        className={commonClass}
+      >
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return (
+    <div
+      onClick={() => onClick && onClick(project || social)}
+      className={commonClass}
+    >
+      {cardContent}
+    </div>
+  );
+};
+
+export default ProjectCard;
+export { ProjectCard };
