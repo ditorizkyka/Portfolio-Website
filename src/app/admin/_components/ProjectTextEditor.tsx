@@ -22,11 +22,6 @@ const Highlight = Mark.create({
     renderHTML({ HTMLAttributes }) {
         return ['mark', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
     },
-    addCommands() {
-        return {
-            toggleHighlight: () => ({ commands }) => commands.toggleMark(this.name),
-        };
-    },
     addKeyboardShortcuts() {
         return {
             'Mod-Shift-h': () => this.editor.commands.toggleMark(this.name),

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -21,7 +20,6 @@ import {
 import supabase from '@/src/lib/supabase/client';
 import { Project } from '@/src/types/project';
 import { Profile } from '@/src/types/profile';
-import { TechStack } from '@/src/types/techStack';
 import { ProjectBadge } from '@/src/components/molecules/ProjectCard';
 import { ProjectText, ProjectTitle } from '@/src/components/atoms/ProjectText';
 import { plainProjectTitle } from '@/src/lib/projectText';
@@ -40,7 +38,6 @@ export default function ProjectDetailPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [allTechStacks, setAllTechStacks] = useState<TechStack[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
@@ -106,15 +103,6 @@ export default function ProjectDetailPage() {
         if (profileData) {
           setProfile(profileData);
         }
-
-        // 5. Fetch all core tech stacks to get icons
-        const { data: stacksData } = await supabase
-          .from('tech_stacks')
-          .select('*');
-
-        if (stacksData) {
-          setAllTechStacks(stacksData);
-        }
       } catch (err) {
         console.error('Error fetching project detail:', err);
       } finally {
@@ -124,31 +112,6 @@ export default function ProjectDetailPage() {
 
     fetchData();
   }, [slug]);
-
-  const getTechStackInfo = (tech: string): TechStack | null => {
-    if (!tech || !allTechStacks.length) return null;
-    const trimmed = tech.trim().toLowerCase();
-
-    // 1. Direct ID or exact name match
-    const exact = allTechStacks.find(
-      (s) => s.id === tech || s.name.trim().toLowerCase() === trimmed
-    );
-    if (exact) return exact;
-
-    // 2. Alphanumeric normalized match (e.g. "Next.js" vs "NextJS")
-    const techNorm = trimmed.replace(/[^a-z0-9]/g, '');
-    const normalized = allTechStacks.find(
-      (s) => s.name.trim().toLowerCase().replace(/[^a-z0-9]/g, '') === techNorm
-    );
-    if (normalized) return normalized;
-
-    // 3. Partial / substring match
-    const partial = allTechStacks.find((s) => {
-      const sLower = s.name.trim().toLowerCase();
-      return sLower.includes(trimmed) || trimmed.includes(sLower);
-    });
-    return partial || null;
-  };
 
   const handleShare = async () => {
     try {
@@ -335,76 +298,21 @@ export default function ProjectDetailPage() {
             </div>
 
             {/* Tech Stack List */}
-            <div className="space-y-2.5 sm:col-span-3 pt-4 border-t border-[#1a1a1c]">
+            <div className="space-y-2 sm:col-span-3 pt-4 border-t border-[#1a1a1c]">
               <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#777]">
                 <Code2 className="w-3.5 h-3.5 text-[#aaa]" />
                 Technologies & Tools
               </span>
-              <div className="flex flex-wrap items-center gap-2.5 pt-1">
+              <div className="flex flex-wrap gap-2 pt-1">
                 {project.tech_stack && project.tech_stack.length > 0 ? (
-                  project.tech_stack.map((tech, idx) => {
-                    const stackInfo = getTechStackInfo(tech);
-                    const iconUrl = stackInfo?.icon_url;
-                    const techTitle = stackInfo?.name || tech;
-                    const docUrl = stackInfo?.doc_url;
-
-                    if (iconUrl) {
-                      const iconContent = (
-                        <div className="relative h-5 w-5 md:h-6 md:w-6 transition-transform duration-200 group-hover:scale-110">
-                          <Image
-                            src={iconUrl}
-                            alt={techTitle}
-                            fill
-                            className="object-contain"
-                            sizes="32px"
-                            unoptimized
-                          />
-                        </div>
-                      );
-
-                      const tooltip = (
-                        <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md border border-[#333] bg-[#141416] px-2 py-0.5 text-[10px] font-medium text-white opacity-0 shadow-lg transition-all duration-150 group-hover:opacity-100 z-30">
-                          {techTitle}
-                        </div>
-                      );
-
-                      if (docUrl) {
-                        return (
-                          <a
-                            key={idx}
-                            href={docUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            title={techTitle}
-                            className="group relative flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-xl bg-white p-2 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-white/10"
-                          >
-                            {iconContent}
-                            {tooltip}
-                          </a>
-                        );
-                      }
-
-                      return (
-                        <div
-                          key={idx}
-                          title={techTitle}
-                          className="group relative flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-xl bg-white p-2 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-white/10"
-                        >
-                          {iconContent}
-                          {tooltip}
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <span
-                        key={idx}
-                        className="rounded-lg border border-[#26262a] bg-[#141416] px-3 py-1.5 text-xs font-medium text-[#ccc]"
-                      >
-                        {tech}
-                      </span>
-                    );
-                  })
+                  project.tech_stack.map((tech, idx) => (
+                    <span
+                      key={idx}
+                      className="rounded-lg border border-[#26262a] bg-[#141416] px-3 py-1 text-xs font-medium text-[#ccc]"
+                    >
+                      {tech}
+                    </span>
+                  ))
                 ) : (
                   <span className="text-xs text-[#666]">General Web Technologies</span>
                 )}
