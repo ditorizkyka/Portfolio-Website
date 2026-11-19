@@ -59,7 +59,7 @@ export const ProjectGalleryCarousel: React.FC<ProjectGalleryCarouselProps> = ({ 
     <div className="w-full space-y-4">
       {/* Main Showcase View */}
       <div
-        className="group relative w-full h-[280px] sm:h-[380px] md:h-[480px] lg:h-[540px] rounded-2xl overflow-hidden border border-[#2a2a2e] bg-[#0c0c0e] shadow-2xl select-none"
+        className="group relative w-full h-[280px] sm:h-[380px] md:h-[480px] lg:h-[540px] rounded-2xl overflow-hidden border border-portfolio-border bg-portfolio-surface shadow-2xl shadow-portfolio-shadow select-none"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -144,8 +144,8 @@ export const ProjectGalleryCarousel: React.FC<ProjectGalleryCarouselProps> = ({ 
                 onClick={() => setCurrentIndex(idx)}
                 className={`relative h-14 w-20 md:h-16 md:w-24 shrink-0 overflow-hidden rounded-xl border transition-colors ${
                   isActive
-                    ? 'border-white ring-1 ring-white/30'
-                    : 'border-[#262628] opacity-50 hover:opacity-100 hover:border-[#444]'
+                    ? 'border-portfolio-ink ring-1 ring-portfolio-ink/30'
+                    : 'border-portfolio-border opacity-50 hover:opacity-100 hover:border-portfolio-border-strong'
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
               >

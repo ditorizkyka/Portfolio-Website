@@ -92,7 +92,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const cardContent = (
     <>
       {/* Thumbnail View */}
-      <div className="relative h-40 md:h-48 w-full overflow-hidden bg-[#121214]">
+      <div className="relative h-40 md:h-48 w-full overflow-hidden bg-portfolio-panel">
         <Image
           src={cardImage}
           alt={plainProjectTitle(cardTitle)}
@@ -109,19 +109,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
       {/* Info Body */}
       <div className="p-3 md:p-4 flex flex-col grow">
-        <h3 className="text-white text-sm md:text-lg font-bold mb-2 line-clamp-1 group-hover:text-blue-500 transition-colors">
+        <h3 className="text-portfolio-ink text-sm md:text-lg font-bold mb-2 line-clamp-1 group-hover:text-portfolio-link transition-colors">
           <ProjectTitle value={cardTitle} />
         </h3>
 
         {cardSubtitle && (
           <div className="mb-3">
-            <span className="inline-block bg-[#1f1f1f] text-[#999999] text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-lg border border-white/5 truncate max-w-full">
+            <span className="inline-block bg-portfolio-raised text-portfolio-muted text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-lg border border-portfolio-border truncate max-w-full">
               {cardSubtitle}
             </span>
           </div>
         )}
 
-        <div className="text-[#999999] text-[10px] md:text-xs leading-relaxed line-clamp-2 md:line-clamp-3">
+        <div className="text-portfolio-muted text-[10px] md:text-xs leading-relaxed line-clamp-2 md:line-clamp-3">
           {isRichProjectText(rawDescription) ? (
             <ProjectText value={rawDescription} />
           ) : (
@@ -132,7 +132,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     </>
   );
 
-  const commonClass = `bg-[#0A0A0B] border border-[#1f1f1f] rounded-xl shadow-lg overflow-hidden hover:shadow-xl hover:border-gray-700 transition-all duration-300 group cursor-pointer flex flex-col h-full text-left ${className}`.trim();
+  const commonClass = `bg-portfolio-surface border border-portfolio-border rounded-xl shadow-lg shadow-portfolio-shadow overflow-hidden hover:shadow-xl hover:border-portfolio-border-strong transition-all duration-300 group cursor-pointer flex flex-col h-full text-left ${className}`.trim();
 
   if (cardHref) {
     return (

@@ -13,10 +13,10 @@ const MyExperience: React.FC<{ experiences : Experience[] }> = ({ experiences })
       {/* Header */}
       <div className="mb-8 md:mb-12">
         <div className="flex items-center space-x-3 mb-4">
-          <Briefcase className="w-7 h-7 text-white" />
-          <h2 className="text-xl md:text-3xl font-bold text-white">My Work/Internship Experience</h2>
+          <Briefcase className="w-7 h-7 text-portfolio-ink" />
+          <h2 className="text-xl md:text-3xl font-bold text-portfolio-ink">My Work/Internship Experience</h2>
         </div>
-        <p className="text-[#999999] leading-relaxed text-xs md:text-xl max-w-3xl">
+        <p className="text-portfolio-muted leading-relaxed text-xs md:text-xl max-w-3xl">
           Real-world experience in mobile development and AI integration through impactful internships and team collaboration.
         </p>
       </div>

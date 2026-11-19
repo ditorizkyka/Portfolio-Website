@@ -44,18 +44,19 @@ export default function SocialSkills({ social }: { social: SoftSkill[] }) {
   };
 
   const closeDialog = () => setSelectedSocial(null);
+  const modalContainer = selectedSocial ? document.getElementById('portfolio-theme') : null;
 
   return (
-    <section className="bg-black mb-20 md:mb-20 text-left font-space-grotesk">
+    <section className="bg-portfolio-canvas mb-20 md:mb-20 text-left font-space-grotesk">
       <div className="w-full">
         <div className="mb-6 md:mb-10">
           <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
-            <UsersRound className="w-6 h-6 md:w-8 md:h-8 text-white" />
-            <h1 className="text-xl md:text-3xl lg:text-4xl font-bold text-white">
+            <UsersRound className="w-6 h-6 md:w-8 md:h-8 text-portfolio-ink" />
+            <h1 className="text-xl md:text-3xl lg:text-4xl font-bold text-portfolio-ink">
               Social Projects
             </h1>
           </div>
-          <p className="text-[#999999] text-xs md:text-sm lg:text-lg max-w-2xl leading-relaxed">
+          <p className="text-portfolio-muted text-xs md:text-sm lg:text-lg max-w-2xl leading-relaxed">
             Leading initiatives and building communities through impactful organizations.
           </p>
         </div>
@@ -73,14 +74,14 @@ export default function SocialSkills({ social }: { social: SoftSkill[] }) {
       </div>
 
       {/* Portal Modal */}
-      {typeof window !== 'undefined' && selectedSocial && createPortal(
+      {selectedSocial && modalContainer && createPortal(
         <div className="fixed inset-0 z-9999 flex items-center justify-center py-3 px-6 md:p-4">
           <div 
             className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
             onClick={closeDialog}
           />
 
-          <div className="relative z-10000 bg-[#0A0A0B] border border-[#333] rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="relative z-10000 bg-portfolio-surface border border-portfolio-border-strong rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl shadow-portfolio-shadow animate-in zoom-in-95 duration-200">
             <button
               onClick={closeDialog}
               className="absolute top-4 right-4 z-50 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-md transition-all border border-white/10"
@@ -108,22 +109,22 @@ export default function SocialSkills({ social }: { social: SoftSkill[] }) {
             </div>
 
             <div className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6">
-              <div className="flex flex-wrap gap-3 md:gap-4 lg:gap-8 pb-4 md:pb-6 border-b border-[#1f1f1f]">
-                <div className="flex items-center gap-2 text-gray-400">
-                  <Calendar className="w-3 h-3 md:w-4 md:h-4 text-[#6DD33D]" />
+              <div className="flex flex-wrap gap-3 md:gap-4 lg:gap-8 pb-4 md:pb-6 border-b border-portfolio-border">
+                <div className="flex items-center gap-2 text-portfolio-muted">
+                  <Calendar className="w-3 h-3 md:w-4 md:h-4 text-portfolio-accent" />
                   <span className="text-xs md:text-sm font-medium">{selectedSocial.duration}</span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-400">
-                  <UsersRound className="w-3 h-3 md:w-4 md:h-4 text-[#6DD33D]" />
+                <div className="flex items-center gap-2 text-portfolio-muted">
+                  <UsersRound className="w-3 h-3 md:w-4 md:h-4 text-portfolio-accent" />
                   <span className="text-xs md:text-sm font-medium">{selectedSocial.role}</span>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-xs md:text-sm font-semibold text-gray-500 mb-2 md:mb-3 uppercase tracking-wider">Soft Skills Earned</h4>
+                <h4 className="text-xs md:text-sm font-semibold text-portfolio-muted mb-2 md:mb-3 uppercase tracking-wider">Soft Skills Earned</h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedSocial.skills_learned?.map((tech, index) => (
-                    <span key={index} className="px-2 md:px-3 py-1 bg-[#1A1A1A] text-gray-300 text-[10px] md:text-sm rounded-md border border-[#333]">
+                    <span key={index} className="px-2 md:px-3 py-1 bg-portfolio-raised text-portfolio-body text-[10px] md:text-sm rounded-md border border-portfolio-border-strong">
                       {tech}
                     </span>
                   ))}
@@ -131,22 +132,22 @@ export default function SocialSkills({ social }: { social: SoftSkill[] }) {
               </div>
 
               <div>
-                <h4 className="text-xs md:text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wider">Deskripsi</h4>
-                <p className="text-gray-300 text-xs md:text-sm lg:text-base leading-6 md:leading-7 whitespace-pre-line">
+                <h4 className="text-xs md:text-sm font-semibold text-portfolio-muted mb-2 uppercase tracking-wider">Deskripsi</h4>
+                <p className="text-portfolio-body text-xs md:text-sm lg:text-base leading-6 md:leading-7 whitespace-pre-line">
                   {selectedSocial.description}
                 </p>
               </div>
 
               <button
                 onClick={closeDialog}
-                className="w-full py-2.5 md:py-3 bg-[#1f1f1f] hover:bg-[#2a2a2a] text-white font-medium rounded-xl transition-colors mt-4 border border-white/5 text-sm md:text-base"
+                className="w-full py-2.5 md:py-3 bg-portfolio-raised hover:bg-portfolio-raised text-portfolio-ink font-medium rounded-xl transition-colors mt-4 border border-portfolio-border text-sm md:text-base"
               >
                 Close Details
               </button>
             </div>
           </div>
         </div>,
-        document.body
+        modalContainer
       )}
     </section>
   );

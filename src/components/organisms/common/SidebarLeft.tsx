@@ -15,11 +15,11 @@ const SidebarLeft : React.FC<{ profile: Profile }> = ({ profile })  => {
   ];
 
   return (
-    <aside className="hidden md:flex fixed left-0 top-0 h-full w-16 pl-20 pr-15 bg-black border-r border-[#1f1f1f] flex-col items-center z-30 py-6">
-      <div className="bg-black">
+    <aside className="hidden md:flex fixed left-0 top-0 h-full w-16 pl-20 pr-15 bg-portfolio-canvas border-r border-portfolio-border flex-col items-center z-30 py-6">
+      <div className="bg-portfolio-canvas">
       <div className="relative">
         {/* Outer circle */}
-        <div className="w-15 h-15 rounded-full bg-[#1f1f1f] flex items-center justify-center shadow-2xl">
+        <div className="w-15 h-15 rounded-full bg-portfolio-raised flex items-center justify-center shadow-2xl shadow-portfolio-shadow">
           {/* Inner circle container */}
           <div className="w-10 h-10 rounded-full overflow-hidden relative">
             <Image 

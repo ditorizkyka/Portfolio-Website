@@ -14,7 +14,7 @@ interface NavIconProps {
 const NavIcon = ({ icon: Icon, isActive }: NavIconProps) => (
   <Icon
     className={`w-8 h-8 transition-colors ${
-      isActive ? 'text-white' : 'text-[#CCCCCC] group-hover:text-white'
+      isActive ? 'text-portfolio-ink' : 'text-portfolio-body group-hover:text-portfolio-ink'
     }`}
   />
 );
@@ -23,7 +23,7 @@ const NavItem = ({ to, icon, isActive }: NavItemProps) => (
   <Link  href ={to}>
     <div
       className={`w-16 h-16 flex items-center justify-center rounded-lg transition-colors cursor-pointer group ${
-        isActive ? 'bg-[#0A0A0B]' : 'hover:bg-[#0A0A0B]'
+        isActive ? 'bg-portfolio-surface' : 'hover:bg-portfolio-surface'
       }`}
     >
       <NavIcon icon={icon} isActive={isActive} />

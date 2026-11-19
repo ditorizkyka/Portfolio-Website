@@ -10,13 +10,13 @@ interface HeroImageProps {
 const HeroImage = ({ src, alt = "Andito Rizkyka R.", className = "" }: HeroImageProps) => {
   if (!src) {
     return (
-      <div className={`relative overflow-hidden rounded-2xl border border-[#333333] bg-[#141415] ${className}`} />
+      <div className={`relative overflow-hidden rounded-2xl border border-portfolio-border-strong bg-portfolio-panel ${className}`} />
     );
   }
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl border border-[#333333] bg-[#141415] shadow-xl transition-all duration-300 hover:border-[#555555] ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-portfolio-border-strong bg-portfolio-panel shadow-xl shadow-portfolio-shadow transition-all duration-300 hover:border-portfolio-border-strong ${className}`}
     >
       <Image 
         src={src} 

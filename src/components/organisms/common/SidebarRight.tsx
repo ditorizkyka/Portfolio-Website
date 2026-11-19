@@ -2,9 +2,9 @@ import React from 'react';
 
 const SidebarRight: React.FC = () => {
   return (
-    <aside className="hidden md:fixed right-0 top-0 h-full w-16 pr-20 pl-15 py-6 bg-black border-l border-[#1f1f1f] flex-col items-center justify-center space-y-6 z-30 md:flex">
+    <aside className="hidden md:fixed right-0 top-0 h-full w-16 pr-20 pl-15 py-6 bg-portfolio-canvas border-l border-portfolio-border flex-col items-center justify-center space-y-6 z-30 md:flex">
       {/* Circle Decorator */}
-      <div className="w-10 h-10 rounded-full bg-black mb-6 shadow-inner" />
+      <div className="w-10 h-10 rounded-full bg-portfolio-canvas mb-6 shadow-inner" />
 
       {/* Icons Section */}
       <nav className="flex flex-col items-center grow justify-center space-y-6">
@@ -43,9 +43,9 @@ const SocialIcon = ({ href, children }: SocialIconProps) => (
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="w-16 h-16 bg-black rounded-lg flex items-center justify-center hover:bg-[#2a2a2a] transition-colors cursor-pointer group"
+    className="w-16 h-16 bg-portfolio-canvas rounded-lg flex items-center justify-center hover:bg-portfolio-raised transition-colors cursor-pointer group"
   >
-    <div className="w-8 h-8 text-[#CCCCCC] group-hover:text-white transition-colors">
+    <div className="w-8 h-8 text-portfolio-body group-hover:text-portfolio-ink transition-colors">
       {children}
     </div>
   </a>

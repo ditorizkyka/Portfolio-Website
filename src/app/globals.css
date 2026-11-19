@@ -10,6 +10,22 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-portfolio-canvas: var(--portfolio-canvas);
+  --color-portfolio-surface: var(--portfolio-surface);
+  --color-portfolio-panel: var(--portfolio-panel);
+  --color-portfolio-raised: var(--portfolio-raised);
+  --color-portfolio-ink: var(--portfolio-ink);
+  --color-portfolio-body: var(--portfolio-body);
+  --color-portfolio-muted: var(--portfolio-muted);
+  --color-portfolio-border: var(--portfolio-border);
+  --color-portfolio-border-strong: var(--portfolio-border-strong);
+  --color-portfolio-accent: var(--portfolio-accent);
+  --color-portfolio-accent-ink: var(--portfolio-accent-ink);
+  --color-portfolio-link: var(--portfolio-link);
+  --color-portfolio-action-ink: var(--portfolio-action-ink);
+  --color-portfolio-action-hover: var(--portfolio-action-hover);
+  --color-portfolio-role-icon: var(--portfolio-role-icon);
+  --color-portfolio-shadow: var(--portfolio-shadow);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -86,3 +102,80 @@ body {
 .project-text a { color: #8be65e; text-decoration: underline; }
 .project-text blockquote { border-inline-start: 2px solid #555; padding-inline-start: 0.75em; }
 .project-text pre { white-space: pre-wrap; }
+
+.portfolio-theme {
+  color-scheme: light dark;
+  --portfolio-canvas: light-dark(#f6f7f3, #000000);
+  --portfolio-surface: light-dark(#ffffff, #0a0a0b);
+  --portfolio-panel: light-dark(#eef0ea, #141415);
+  --portfolio-raised: light-dark(#e6eae2, #212123);
+  --portfolio-ink: light-dark(#171c17, #ffffff);
+  --portfolio-body: light-dark(#424c43, #cccccc);
+  --portfolio-muted: light-dark(#566156, #989a98);
+  --portfolio-border: light-dark(#dbe1d7, #242426);
+  --portfolio-border-strong: light-dark(#a7b3a5, #414143);
+  --portfolio-accent: light-dark(#396b2a, #6dd33d);
+  --portfolio-accent-ink: light-dark(#ffffff, #000000);
+  --portfolio-link: light-dark(#24568e, #8ab9ff);
+  --portfolio-action-ink: light-dark(#ffffff, #000000);
+  --portfolio-action-hover: light-dark(#343e34, #e0e0e0);
+  --portfolio-role-icon: light-dark(#e6eae2, #373739);
+  --portfolio-shadow: light-dark(rgb(25 36 26 / 0.06), rgb(0 0 0 / 0.2));
+  background-color: var(--portfolio-canvas);
+  color: var(--portfolio-ink);
+}
+
+.portfolio-theme[data-theme="light"] {
+  color-scheme: light;
+}
+
+.portfolio-theme[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.portfolio-theme[data-theme-switching] * {
+  transition-duration: 0s !important;
+}
+
+.portfolio-theme .portfolio-logo {
+  filter: brightness(0) opacity(0.72);
+}
+
+.portfolio-theme[data-theme="dark"] .portfolio-logo {
+  filter: none;
+}
+
+.portfolio-theme .theme-to-light,
+.portfolio-theme[data-theme="dark"] .theme-to-dark {
+  display: none;
+}
+
+.portfolio-theme[data-theme="dark"] .theme-to-light {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  .portfolio-theme:not([data-theme]) .portfolio-logo {
+    filter: none;
+  }
+
+  .portfolio-theme:not([data-theme]) .theme-to-dark {
+    display: none;
+  }
+
+  .portfolio-theme:not([data-theme]) .theme-to-light {
+    display: block;
+  }
+}
+
+.portfolio-theme .project-text a {
+  color: var(--portfolio-accent);
+}
+
+.portfolio-theme .project-text blockquote {
+  border-inline-start-color: var(--portfolio-border-strong);
+}
+
+.portfolio-theme .project-text mark {
+  color: light-dark(#654700, #fef08a);
+}

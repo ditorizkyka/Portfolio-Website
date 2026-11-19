@@ -6,7 +6,7 @@ import aiProfile from '../../../../assets/logos/ai-eng.png';
 const services: RoleData[] = [
   {
     icon: (
-      <svg className="w-full h-full text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-full h-full text-portfolio-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           d="M16 18l6-6-6-6M8 6l-6 6 6 6"
           strokeWidth="2"
@@ -31,17 +31,17 @@ const services: RoleData[] = [
 
 const MyRole: React.FC = () => {
   return (
-    <section className="bg-black text-white text-left font-space-grotesk">
+    <section className="bg-portfolio-canvas text-portfolio-ink text-left font-space-grotesk">
       <div className="max-w-6xl mx-auto mb-20 md:mb-32">
         {/* Header */}
         <div className="mb-8 md:mb-12">
           <div className="flex items-center gap-3 mb-4">
-            <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="w-7 h-7 text-portfolio-ink" fill="currentColor" viewBox="0 0 24 24">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
             <h2 className="text-lg md:text-3xl font-bold">My Skills/Role</h2>
           </div>
-          <p className="text-[#999999] text-[12px] md:text-xl leading-relaxed max-w-4xl">
+          <p className="text-portfolio-muted text-[12px] md:text-xl leading-relaxed max-w-4xl">
             Contributions across various roles—from developer to mentor—driving innovation and collaboration in every project.
           </p>
         </div>

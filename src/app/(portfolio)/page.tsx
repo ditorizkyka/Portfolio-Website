@@ -2,30 +2,29 @@
 import { useState , useEffect } from 'react';
 
 // Common Components (Layout)
-import SidebarLeft from '../components/organisms/common/SidebarLeft';
-import SidebarRight from '../components/organisms/common/SidebarRight';
-import StatusBar from '../components/organisms/common/StatusBar';
-import MobileTopNav from '../components/organisms/common/MobileTopNav';
-import FooterBar from '../components/organisms/common/FooterBar';
-import HeroSection from '../components/organisms/hero-section/HeroSection';
-import SocialMediaSection from '../components/organisms/hero-section/SocialMediaSection';
-import MyStats from '../components/organisms/hero-section/MyStats';
-import MyAcademics from '../components/organisms/hero-section/MyAcademics';
-import MyStacks from '../components/organisms/hero-section/MyStacks';
-import MyExperience from '../components/organisms/hero-section/MyExperience';
-import MyRole from '../components/organisms/hero-section/MyRole';
-import "./globals.css";
-import { Project } from '../types/project';
-import supabase from '../lib/supabase/client';
-import { Academic } from '../types/academic';
-import { TechStack } from '../types/techStack';
-import { Experience } from '../types/experience';
-import { Profile } from '../types/profile';
-import MyTopProjects from '../components/organisms/hero-section/MyTopProjects';
-import { Certification } from '../types/certification';
-import { SoftSkill } from '../types/softSkills';
+import SidebarLeft from '@/src/components/organisms/common/SidebarLeft';
+import SidebarRight from '@/src/components/organisms/common/SidebarRight';
+import StatusBar from '@/src/components/organisms/common/StatusBar';
+import MobileTopNav from '@/src/components/organisms/common/MobileTopNav';
+import FooterBar from '@/src/components/organisms/common/FooterBar';
+import HeroSection from '@/src/components/organisms/hero-section/HeroSection';
+import SocialMediaSection from '@/src/components/organisms/hero-section/SocialMediaSection';
+import MyStats from '@/src/components/organisms/hero-section/MyStats';
+import MyAcademics from '@/src/components/organisms/hero-section/MyAcademics';
+import MyStacks from '@/src/components/organisms/hero-section/MyStacks';
+import MyExperience from '@/src/components/organisms/hero-section/MyExperience';
+import MyRole from '@/src/components/organisms/hero-section/MyRole';
+import { Project } from '@/src/types/project';
+import supabase from '@/src/lib/supabase/client';
+import { Academic } from '@/src/types/academic';
+import { TechStack } from '@/src/types/techStack';
+import { Experience } from '@/src/types/experience';
+import { Profile } from '@/src/types/profile';
+import MyTopProjects from '@/src/components/organisms/hero-section/MyTopProjects';
+import { Certification } from '@/src/types/certification';
+import { SoftSkill } from '@/src/types/softSkills';
 
-// import MyTopProjects from '../components/organisms/hero-section/MyTopProjects';
+// import MyTopProjects from '@/src/components/organisms/hero-section/MyTopProjects';
 
 
 
@@ -131,9 +130,9 @@ const PortfolioPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center z-50 fixed inset-0">
-        <div className="w-12 h-12 border-4 border-[#333333] border-t-[#6DD33D] rounded-full animate-spin mb-4"></div>
-        <span className="text-[#CCCCCC] font-space-grotesk tracking-widest text-sm animate-pulse">LOADING ASSETS...</span>
+      <div className="min-h-screen bg-portfolio-canvas flex flex-col items-center justify-center z-50 fixed inset-0">
+        <div className="w-12 h-12 border-4 border-portfolio-border-strong border-t-portfolio-accent rounded-full animate-spin mb-4"></div>
+        <span className="text-portfolio-body font-space-grotesk tracking-widest text-sm animate-pulse">LOADING ASSETS...</span>
       </div>
     );
   }
@@ -141,7 +140,7 @@ const PortfolioPage: React.FC = () => {
   console.log('Fetched projects:', profile);
 
   return (
-    <div className="min-h-screen  bg-black text-white font-space-grotesk selection:bg-[#6DD33D] selection:text-black">
+    <div className="min-h-screen  bg-portfolio-canvas text-portfolio-ink font-space-grotesk selection:bg-portfolio-accent selection:text-portfolio-accent-ink">
       
       {/* 📱 Mobile Navigation (Hanya muncul di layar kecil) */}
       <div className="block  md:hidden">

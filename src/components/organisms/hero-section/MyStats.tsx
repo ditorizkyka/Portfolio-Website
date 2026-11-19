@@ -16,7 +16,7 @@ const MyStats: React.FC<{ projectsCount: number, organizationCount: number, cert
   { number: `${worksCount}`, label: "Works Experienced" }
 ];
   return (
-    <section className="bg-black  md:py-0">
+    <section className="bg-portfolio-canvas  md:py-0">
       <div className="max-w-6xl  mx-auto">
         {/* Mobile: grid-cols-2 (2 baris)
           Desktop: md:grid-cols-4 (1 baris)
@@ -42,10 +42,10 @@ interface StatItemProps {
 
 const StatItem = ({ number, label }: StatItemProps) => (
   <div className="text-center group">
-    <div className="text-3xl md:text-4xl font-bold mb-1 md:mb-2 text-white font-space-grotesk group-hover:text-[#6DD33D] transition-colors duration-300">
+    <div className="text-3xl md:text-4xl font-bold mb-1 md:mb-2 text-portfolio-ink font-space-grotesk group-hover:text-portfolio-accent transition-colors duration-300">
       {number}
     </div>
-    <div className="text-sm md:text-base text-[#CCCCCC] font-space-grotesk">
+    <div className="text-sm md:text-base text-portfolio-body font-space-grotesk">
       {label}
     </div>
   </div>

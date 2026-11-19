@@ -1,13 +1,12 @@
 "use client";
 import { useState , useEffect } from 'react';
 // Common Components (Layout)
-import SidebarLeft from '../../components/organisms/common/SidebarLeft';
-import SidebarRight from '../../components/organisms/common/SidebarRight';
-import StatusBar from '../../components/organisms/common/StatusBar';
-import MobileTopNav from '../../components/organisms/common/MobileTopNav';
-import FooterBar from '../../components/organisms/common/FooterBar';
-import "../globals.css";
-import supabase from '../../lib/supabase/client';
+import SidebarLeft from '@/src/components/organisms/common/SidebarLeft';
+import SidebarRight from '@/src/components/organisms/common/SidebarRight';
+import StatusBar from '@/src/components/organisms/common/StatusBar';
+import MobileTopNav from '@/src/components/organisms/common/MobileTopNav';
+import FooterBar from '@/src/components/organisms/common/FooterBar';
+import supabase from '@/src/lib/supabase/client';
 import { Carousel } from '@/src/types/carousel';
 import CarouselSection from '@/src/components/organisms/common/CarouselSection';
 import { SoftSkill } from '@/src/types/softSkills';
@@ -77,15 +76,15 @@ const SocialPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center z-50 fixed inset-0">
-        <div className="w-12 h-12 border-4 border-[#333333] border-t-[#6DD33D] rounded-full animate-spin mb-4"></div>
-        <span className="text-[#CCCCCC] font-space-grotesk tracking-widest text-sm animate-pulse">LOADING ASSETS...</span>
+      <div className="min-h-screen bg-portfolio-canvas flex flex-col items-center justify-center z-50 fixed inset-0">
+        <div className="w-12 h-12 border-4 border-portfolio-border-strong border-t-portfolio-accent rounded-full animate-spin mb-4"></div>
+        <span className="text-portfolio-body font-space-grotesk tracking-widest text-sm animate-pulse">LOADING ASSETS...</span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-space-grotesk selection:bg-[#6DD33D] selection:text-black">
+    <div className="min-h-screen bg-portfolio-canvas text-portfolio-ink font-space-grotesk selection:bg-portfolio-accent selection:text-portfolio-accent-ink">
       
       {/* 📱 Mobile Navigation */}
       <div className="block md:hidden">

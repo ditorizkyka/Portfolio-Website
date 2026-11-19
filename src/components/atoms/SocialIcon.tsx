@@ -10,9 +10,9 @@ const SocialIcon = ({ href, children }: SocialIconProps) => (
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="w-16 h-16 bg-black rounded-lg flex items-center justify-center hover:bg-[#2a2a2a] transition-colors cursor-pointer group"
+    className="w-16 h-16 bg-portfolio-canvas rounded-lg flex items-center justify-center hover:bg-portfolio-raised transition-colors cursor-pointer group"
   >
-    <div className="w-8 h-8 text-[#CCCCCC] group-hover:text-white transition-colors">
+    <div className="w-8 h-8 text-portfolio-body group-hover:text-portfolio-ink transition-colors">
       {children}
     </div>
   </a>

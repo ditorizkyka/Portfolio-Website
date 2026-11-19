@@ -25,7 +25,7 @@ const CarouselSection: React.FC<{ carousels : Carousel[]}> = ( { carousels }) =>
 
   return (
     <div className="max-w-4xl mx-auto mb-15 mt-10 md:mb-20  md:px-0">
-      <div className="relative w-full h-40 md:h-80 rounded-xl overflow-hidden shadow-2xl bg-[#0A0A0B] border border-[#1f1f1f]">
+      <div className="relative w-full h-40 md:h-80 rounded-xl overflow-hidden shadow-2xl shadow-portfolio-shadow bg-portfolio-surface border border-portfolio-border">
         {/* Slides Container */}
         <div
           className="flex transition-transform duration-500 ease-in-out h-full"
@@ -44,7 +44,7 @@ const CarouselSection: React.FC<{ carousels : Carousel[]}> = ( { carousels }) =>
         <div className="absolute bottom-0 left-0 w-full h-1 bg-black/20">
           <div
             key={currentSlide} // Reset animasi setiap slide berubah
-            className="h-full bg-[#6DD33D] animate-progress-timer"
+            className="h-full bg-portfolio-accent animate-progress-timer"
           />
         </div>
       </div>

@@ -38,7 +38,7 @@ const SocialMediaSection: React.FC = () => {
   const size = isMobile ? 80 : 120;
 
   return (
-    <section className="py-10 bg-black overflow-hidden">
+    <section className="py-10 bg-portfolio-canvas overflow-hidden">
       <div className="relative flex overflow-x-hidden">
         {/* Container Utama Marquee */}
         <div className="flex animate-marquee space-x-14 items-center">
@@ -56,7 +56,7 @@ const SocialMediaSection: React.FC = () => {
                 alt={logo.alt}
                 width={size}
                 height={size}
-                className="object-contain"
+                className="portfolio-logo object-contain"
                 // Priority true jika section ini ada di bagian atas (above the fold)
                 priority={index < 3} 
               />

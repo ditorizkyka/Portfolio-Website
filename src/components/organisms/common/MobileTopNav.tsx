@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { LucideIcon } from 'lucide-react';
 import React from 'react';
 import { User, Zap, Shapes } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 interface MobileNavLinkProps {
   to: string;
@@ -22,9 +23,9 @@ const MobileTopNav: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-black/80 backdrop-blur-md border-b border-[#1f1f1f] py-3 z-50 md:hidden">
+    <nav className="fixed top-0 left-0 right-0 bg-portfolio-canvas/80 backdrop-blur-md border-b border-portfolio-border py-3 z-50 md:hidden">
 
-      <div className="flex justify-center items-center px-3">
+      <div className="flex items-center justify-center gap-2 px-2 sm:gap-3">
         <div className="flex gap-1">
           {navItems.map((item) => (
             <MobileNavLink
@@ -36,19 +37,20 @@ const MobileTopNav: React.FC = () => {
             />
           ))}
         </div>
+        <ThemeToggle />
       </div>
     </nav>
   );
 };
 
 const MobileNavLink = ({ to, icon: Icon, label, isActive }: MobileNavLinkProps) => {
-  const baseClass = "flex items-center gap-2 px-5 py-3 rounded-lg border transition-all duration-300 ease-in-out";
-  const activeClass = "bg-[#0A0A0B] border-[#333333] text-white shadow-lg";
-  const inactiveClass = "border-transparent text-[#999999] hover:text-white hover:border-[#1f1f1f]";
+  const baseClass = "flex min-h-11 items-center gap-1 rounded-lg border px-2.5 transition-colors sm:gap-2 sm:px-5";
+  const activeClass = "bg-portfolio-surface border-portfolio-border-strong text-portfolio-ink";
+  const inactiveClass = "border-transparent text-portfolio-muted hover:text-portfolio-ink hover:border-portfolio-border";
 
   return (
     <Link href={to} className={`${baseClass} ${isActive ? activeClass : inactiveClass}`}>
-      <Icon className={`w-4 h-4 ${isActive ? 'text-[#6DD33D]' : 'text-inherit'}`} />
+      <Icon className={`w-4 h-4 ${isActive ? 'text-portfolio-accent' : 'text-inherit'}`} />
       <span className="text-[10px] font-bold tracking-widest">{label}</span>
     </Link>
   );

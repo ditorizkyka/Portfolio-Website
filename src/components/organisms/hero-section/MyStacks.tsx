@@ -12,16 +12,16 @@ const MyStacks: React.FC<{ stacks: TechStack[] }> = ({ stacks }) => {
   const otherStacks = stacks.filter((stack) => !stack.is_featured);
 
   return (
-    <section className="bg-black text-white font-space-grotesk ">
+    <section className="bg-portfolio-canvas text-portfolio-ink font-space-grotesk ">
       <div className="max-w-6xl mx-auto ">
 
         {/* Header Utama */}
         <div className="mb-10 md:pb-4">
           <div className="flex items-center gap-3 mb-2 md:mb-4">
-            <Layers className="w-6 h-6 text-white" />
+            <Layers className="w-6 h-6 text-portfolio-ink" />
             <h2 className="text-2xl md:text-3xl font-bold">Tech Stack</h2>
           </div>
-          <p className="text-[#888] text-sm md:text-xl max-w-2xl">
+          <p className="text-portfolio-muted text-sm md:text-xl max-w-2xl">
             My technical arsenal for building scalable digital solutions.
           </p>
         </div>
@@ -30,7 +30,7 @@ const MyStacks: React.FC<{ stacks: TechStack[] }> = ({ stacks }) => {
         {featuredStacks.length > 0 && (
           <div className="mb-8">
             {/* Sub-header untuk Featured */}
-            <div className="flex items-center gap-2 mb-8 text-white">
+            <div className="flex items-center gap-2 mb-8 text-portfolio-ink">
               <Zap className="w-4 h-4 fill-current" />
               <h3 className="text-sm font-bold tracking-widest uppercase">Core Technologies</h3>
             </div>
@@ -57,10 +57,10 @@ const MyStacks: React.FC<{ stacks: TechStack[] }> = ({ stacks }) => {
         {otherStacks.length > 0 && (
           <div>
             {/* Separator Halus */}
-            <div className="mb-6 flex items-center gap-2 text-[#666]">
-              <div className="h-px flex-1 bg-[#333]"></div>
+            <div className="mb-6 flex items-center gap-2 text-portfolio-muted">
+              <div className="h-px flex-1 bg-portfolio-border-strong"></div>
               <span className="text-xs font-medium uppercase tracking-wider">Additional Tools</span>
-              <div className="h-px flex-1 bg-[#333]"></div>
+              <div className="h-px flex-1 bg-portfolio-border-strong"></div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -87,7 +87,7 @@ const MyStacks: React.FC<{ stacks: TechStack[] }> = ({ stacks }) => {
               {otherStacks.length > MOBILE_LIMIT && (
                 <button
                   onClick={() => setShowAll(!showAll)}
-                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#333] bg-transparent text-xs font-medium text-[#888] hover:text-white hover:border-white/40 transition-all active:scale-95"
+                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-portfolio-border-strong bg-transparent text-xs font-medium text-portfolio-muted hover:text-portfolio-ink hover:border-portfolio-ink/40 transition-all active:scale-95"
                 >
                   <span>{showAll ? 'Show Less' : `View All (${otherStacks.length - MOBILE_LIMIT} more)`}</span>
                   {showAll ? (
